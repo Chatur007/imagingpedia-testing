@@ -8,7 +8,7 @@ const courses = [
     id: 1,
     title: "Radiology Fundamentals",
     description: "Master the basics of medical imaging interpretation and radiological anatomy.",
-    image: "https://images.unsplash.com/photo-1559757175-7b21671e94e0?w=800&h=500&fit=crop",
+    image: "https://img-c.udemycdn.com/course/750x422/4475632_fc79_2.jpg",
     duration: "40 hours",
     modules: 12,
     students: 1234,
@@ -72,58 +72,59 @@ export const CoursesPreview = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.map((course, index) => (
-            <motion.div
-              key={course.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="glass-card overflow-hidden card-hover group"
-            >
-              <div className="relative overflow-hidden">
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-                  {course.tag}
-                </span>
-              </div>
-
-              <div className="p-6">
-                <h3 className="font-display text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                  {course.description}
-                </p>
-
-                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                  <span className="flex items-center gap-1">
-                    <Clock size={14} />
-                    {course.duration}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <BookOpen size={14} />
-                    {course.modules} modules
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users size={14} />
-                    {course.students}
+            <Link key={course.id} to={`/courses/${course.id}`} className="block">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="glass-card overflow-hidden card-hover group h-full"
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+                    {course.tag}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                  <div className="flex items-center gap-1">
-                    <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                    <span className="font-semibold text-foreground">{course.rating}</span>
+                <div className="p-6">
+                  <h3 className="font-display text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {course.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                    {course.description}
+                  </p>
+
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                    <span className="flex items-center gap-1">
+                      <Clock size={14} />
+                      {course.duration}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <BookOpen size={14} />
+                      {course.modules} modules
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users size={14} />
+                      {course.students}
+                    </span>
                   </div>
-                  <div className="text-xl font-bold text-primary">{course.price}</div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                    <div className="flex items-center gap-1">
+                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                      <span className="font-semibold text-foreground">{course.rating}</span>
+                    </div>
+                    <div className="text-xl font-bold text-primary">{course.price}</div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
 

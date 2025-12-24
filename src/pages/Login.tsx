@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { login } from "@/lib/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,14 +18,20 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login - replace with actual auth when Cloud is connected
-    setTimeout(() => {
+    try {
+      const result = login(email, password);
       setIsLoading(false);
-      toast({
-        title: "Login functionality",
-        description: "Connect Lovable Cloud to enable authentication.",
-      });
-    }, 1000);
+      if (result.ok) {
+        toast({ title: "Signed in", description: `Welcome back, ${result.user.name}!` });
+        navigate("/dashboard", { replace: true });
+      } else {
+        const errMsg = (result as { ok: false; error: string }).error;
+        toast({ title: "Login failed", description: errMsg });
+      }
+    } catch (err) {
+      setIsLoading(false);
+      toast({ title: "Login error", description: "Something went wrong. Please try again." });
+    }
   };
 
   return (

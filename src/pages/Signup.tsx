@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { signUp, isValidEmail } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -12,18 +14,31 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      if (!isValidEmail(email)) {
+        setIsLoading(false);
+        toast({ title: "Invalid email", description: "Please enter a valid email address." });
+        return;
+      }
+      const result = signUp(name, email, password);
       setIsLoading(false);
-      toast({
-        title: "Sign up functionality",
-        description: "Connect Lovable Cloud to enable authentication.",
-      });
-    }, 1000);
+      if (result.ok) {
+        toast({ title: "Account created", description: `Welcome, ${result.user.name}!` });
+        navigate("/dashboard", { replace: true });
+      } else {
+        const errMsg = (result as { ok: false; error: string }).error;
+        toast({ title: "Sign up failed", description: errMsg });
+      }
+    } catch (err) {
+      setIsLoading(false);
+      toast({ title: "Error", description: "Something went wrong. Please try again." });
+    }
   };
 
   const benefits = [

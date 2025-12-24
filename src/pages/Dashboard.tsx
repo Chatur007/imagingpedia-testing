@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { getCurrentUser } from "@/lib/auth";
 
 const enrolledCourses = [
   {
@@ -34,9 +35,10 @@ const recentTests = [
 ];
 
 const Dashboard = () => {
+  const current = getCurrentUser();
   const user = {
-    name: "Dr. John Smith",
-    email: "john.smith@hospital.com",
+    name: current?.name || "Student",
+    email: current?.email || "student@example.com",
     avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop",
   };
 

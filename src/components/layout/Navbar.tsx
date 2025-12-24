@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { isAuthenticated, getCurrentUser, logout } from "@/lib/auth";
+import { toast } from "@/hooks/use-toast";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -16,6 +18,9 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [authed, setAuthed] = useState<boolean>(isAuthenticated());
+  const [displayName, setDisplayName] = useState<string>(getCurrentUser()?.name || "");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +33,31 @@ export const Navbar = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Update auth state on navigation or storage changes
+    const update = () => {
+      const auth = isAuthenticated();
+      setAuthed(auth);
+      setDisplayName(getCurrentUser()?.name || "");
+    };
+    update();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "imagingpedia_current_user_email" || e.key === "imagingpedia_users") {
+        update();
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setAuthed(false);
+    setDisplayName("");
+    toast({ title: "Logged out", description: "You have been signed out." });
+    navigate("/", { replace: true });
+  };
 
   return (
     <header
@@ -69,12 +99,24 @@ export const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" asChild>
-            <Link to="/login">Log In</Link>
-          </Button>
-          <Button variant="hero" asChild>
-            <Link to="/signup">Start Learning</Link>
-          </Button>
+          {authed ? (
+            <>
+              <span className="text-sm text-muted-foreground">Hello, {displayName.split(" ")[0]}</span>
+              <Button variant="outline" asChild>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <Button variant="ghost" onClick={handleLogout}>Log Out</Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link to="/login">Log In</Link>
+              </Button>
+              <Button variant="hero" asChild>
+                <Link to="/signup">Start Learning</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -112,12 +154,25 @@ export const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-border/50">
-                <Button variant="outline" asChild className="w-full">
-                  <Link to="/login">Log In</Link>
-                </Button>
-                <Button variant="hero" asChild className="w-full">
-                  <Link to="/signup">Start Learning</Link>
-                </Button>
+                {authed ? (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/dashboard">Dashboard</Link>
+                    </Button>
+                    <Button variant="secondary" className="w-full" onClick={handleLogout}>
+                      Log Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/login">Log In</Link>
+                    </Button>
+                    <Button variant="hero" asChild className="w-full">
+                      <Link to="/signup">Start Learning</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </motion.div>

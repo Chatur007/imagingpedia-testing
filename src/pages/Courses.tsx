@@ -12,7 +12,7 @@ const allCourses = [
     id: 1,
     title: "Radiology Fundamentals",
     description: "Master the basics of medical imaging interpretation and radiological anatomy. Perfect for beginners.",
-    image: "https://images.unsplash.com/photo-1559757175-7b21671e94e0?w=800&h=500&fit=crop",
+    image: "https://img-c.udemycdn.com/course/750x422/4475632_fc79_2.jpg",
     duration: "40 hours",
     modules: 12,
     students: 1234,
