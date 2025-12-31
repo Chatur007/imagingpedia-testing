@@ -2,19 +2,23 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-medical.jpg";
 import UpdatedHeroImage from "@/assets/Gemini_Generated_Image_cmg1ufcmg1ufcmg1.png";
+import mobileImage from "@/assets/Mobile screen.png";
 
 export const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={UpdatedHeroImage}
-          alt="Medical imaging background"
-          className="w-full h-full object-cover opacity-70"
-        />
+        <picture className="block h-full w-full">
+          <source media="(max-width: 768px)" srcSet={mobileImage} />
+          <source media="(min-width: 769px)" srcSet={UpdatedHeroImage} />
+          <img
+            src={UpdatedHeroImage}
+            alt="Medical imaging background"
+            className="w-full h-full object-cover opacity-70"
+          />
+        </picture>
         <div className="absolute inset-0 hero-overlay" />
       </div>
 
