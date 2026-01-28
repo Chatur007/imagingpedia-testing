@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 const testsData = {
   radiology: {
     id: "radiology",
@@ -182,14 +184,14 @@ const Tests = () => {
       setIsLoadingQuestions(true);
       try {
         // Fetch subject details
-        const subjectRes = await fetch(`http://localhost:3000/subjects/${incoming.subjectId}`);
+        const subjectRes = await fetch(`${API_BASE_URL}/subjects/${incoming.subjectId}`);
         if (subjectRes.ok) {
           const subjectData = await subjectRes.json();
           setSubjectName(subjectData.subject_name);
         }
         
         // Fetch questions
-        const questionsRes = await fetch(`http://localhost:3000/questions/subject/${incoming.subjectId}`);
+        const questionsRes = await fetch(`${API_BASE_URL}/questions/subject/${incoming.subjectId}`);
         if (questionsRes.ok) {
           const questionsData = await questionsRes.json();
           setQuestions(questionsData);
@@ -277,7 +279,7 @@ const Tests = () => {
 
       console.log(`Submitting Question ${currentQuestion.id}:`, payload);
 
-      const response = await fetch('http://localhost:3000/submission', {
+      const response = await fetch(`${API_BASE_URL}/submission`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -343,7 +345,7 @@ const Tests = () => {
 
             console.log(`Submitting Question ${question.id}:`, payload);
 
-            const response = await fetch('http://localhost:3000/submission', {
+            const response = await fetch(`${API_BASE_URL}/submission`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload),

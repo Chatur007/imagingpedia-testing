@@ -14,6 +14,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 interface Subject {
   id: number;
   subject_name: string;
@@ -33,7 +35,7 @@ const StartTest = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch('http://localhost:3000/subjects');
+        const response = await fetch(`${API_BASE_URL}/subjects`);
         if (response.ok) {
           const data = await response.json();
           setSubjects(data);
@@ -63,7 +65,7 @@ const StartTest = () => {
     
     try {
       // Save student to database
-      const response = await fetch('http://localhost:3000/students', {
+      const response = await fetch(`${API_BASE_URL}/students`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

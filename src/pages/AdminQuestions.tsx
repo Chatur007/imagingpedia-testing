@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 interface Question {
   id: number;
   subject_id: number;
@@ -91,7 +93,7 @@ const AdminQuestions = () => {
 
   const fetchSubjects = async () => {
     try {
-      const res = await fetch("http://localhost:3000/subjects");
+      const res = await fetch(`${API_BASE_URL}/subjects`);
       if (res.ok) {
         const data = await res.json();
         setSubjects(data);
@@ -103,7 +105,7 @@ const AdminQuestions = () => {
 
   const fetchQuestions = async () => {
     try {
-      const res = await fetch("http://localhost:3000/questions");
+      const res = await fetch(`${API_BASE_URL}/questions`);
       if (res.ok) {
         const data = await res.json();
         setQuestions(data);
@@ -127,8 +129,8 @@ const AdminQuestions = () => {
       };
 
       const url = editingId
-        ? `http://localhost:3000/questions/${editingId}`
-        : "http://localhost:3000/questions";
+        ? `${API_BASE_URL}/questions/${editingId}`
+        : `${API_BASE_URL}/questions`;
 
       const method = editingId ? "PUT" : "POST";
 
@@ -176,7 +178,7 @@ const AdminQuestions = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
-        const response = await fetch(`http://localhost:3000/questions/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/questions/${id}`, {
           method: "DELETE",
         });
 
