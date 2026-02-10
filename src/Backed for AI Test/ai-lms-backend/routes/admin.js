@@ -65,6 +65,36 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/create", async (req, res) => {
+  const { username, password, email } = req.body;
+
+  try {
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password required" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert admin
+    const result = await pool.query(
+      "INSERT INTO admins (username, password, email) VALUES ($1, $2, $3) RETURNING id, username, email",
+      [username, hashedPassword, email]
+    );
+
+    res.json({ 
+      message: "Admin created successfully", 
+      admin: result.rows[0] 
+    });
+  } catch (error) {
+    if (error.code === "23505") {
+      res.status(400).json({ error: "Username already exists" });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
+  }
+});
+
 // Verify Admin Token
 router.post("/verify", (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
