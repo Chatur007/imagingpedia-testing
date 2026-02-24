@@ -31,7 +31,7 @@ async function createNewAdmin() {
     );
 
     if (existingUser.rows.length > 0) {
-      console.log(`✗ Username '${username}' already exists!`);
+      console.log(`Username '${username}' already exists!`);
       process.exit(1);
     }
 
@@ -39,7 +39,7 @@ async function createNewAdmin() {
     const password = await question("Enter password: ");
     
     if (!password.trim() || password.length < 6) {
-      console.log("✗ Password must be at least 6 characters!");
+      console.log("Password must be at least 6 characters!");
       process.exit(1);
     }
 
@@ -73,7 +73,7 @@ async function createNewAdmin() {
     }
 
   } catch (error) {
-    console.error("✗ Error creating admin:", error.message);
+    console.error("Error creating admin:", error.message);
     process.exit(1);
   } finally {
     rl.close();
