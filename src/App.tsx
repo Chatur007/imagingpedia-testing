@@ -9,11 +9,13 @@ import Index from "./pages/Index";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import Tests from "./pages/Tests";
+import PracticeTest from "./pages/PracticeTest";
 import StartTest from "./pages/StartTest";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AdminQuestions from "./pages/AdminQuestions";
+import AdminPracticeQuestions from "./pages/AdminPracticeQuestions";
 import AdminCourses from "./pages/AdminCourses";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -38,6 +40,7 @@ const App = () => (
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
             <Route path="/tests" element={<Tests />} />
+            <Route path="/practice-test" element={<PracticeTest />} />
             <Route path="/start-test" element={<StartTest />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -55,6 +58,14 @@ const App = () => (
               element={
                 <RequireAdminAuth>
                   <AdminQuestions />
+                </RequireAdminAuth>
+              }
+            />
+            <Route
+              path="/admin/practice-questions"
+              element={
+                <RequireAdminAuth>
+                  <AdminPracticeQuestions />
                 </RequireAdminAuth>
               }
             />

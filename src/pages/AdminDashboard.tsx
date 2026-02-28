@@ -159,6 +159,35 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
             </motion.div>
+
+            {/* Admin Practice Questions Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+            >
+              <Link to="/admin/practice-questions" className="block h-full">
+                <Card className="p-8 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-200/20 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full hover:border-emerald-300/40 hover:-translate-y-1">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-14 h-14 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                      <HelpCircle className="w-7 h-7 text-emerald-600" />
+                    </div>
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                      MANAGER
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-bold font-display text-foreground mb-2">
+                    Manage Practice Questions
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Create and manage practice questions and subjects separate from the main tests.
+                  </p>
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+                    Go to Practice Questions
+                  </Button>
+                </Card>
+              </Link>
+            </motion.div>
           </div>
 
           {/* Logout Button */}

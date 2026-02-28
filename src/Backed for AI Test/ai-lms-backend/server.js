@@ -9,6 +9,8 @@ import studentRoutes from "./routes/students.js";
 import subjectRoutes from "./routes/subjects.js";
 import courseRoutes from "./routes/courses.js";
 import adminRoutes from "./routes/admin.js";
+import practiceQuestionsRoutes from "./routes/practiceQuestions.js";
+import practiceSubjectsRoutes from "./routes/practiceSubjects.js";
 import path from "path";
 import fs from "fs";
 
@@ -37,6 +39,8 @@ if (!fs.existsSync(uploadsDir)) {
 app.use("/uploads", express.static(uploadsDir));
 
 app.use("/questions",questionRoutes);
+app.use("/practice-questions", practiceQuestionsRoutes);
+app.use("/practice-subjects", practiceSubjectsRoutes);
 app.use("/submission",submissionRoutes);
 app.use("/students",studentRoutes);
 app.use("/subjects",subjectRoutes);

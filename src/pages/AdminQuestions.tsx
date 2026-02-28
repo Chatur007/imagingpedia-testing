@@ -37,12 +37,15 @@ interface Subject {
   display_order?: number;
 }
 
-const AdminQuestions = () => {
+const AdminQuestions = ({ initialPracticeMode = false }: { initialPracticeMode?: boolean }) => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isPracticeMode, setIsPracticeMode] = useState<boolean>(initialPracticeMode);
+  const [practiceSubjects, setPracticeSubjects] = useState<Subject[]>([]);
+  const [practiceQuestions, setPracticeQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -133,10 +136,12 @@ const AdminQuestions = () => {
 
   const fetchSubjects = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/subjects`);
+      const url = isPracticeMode ? `${API_BASE_URL}/practice-subjects` : `${API_BASE_URL}/subjects`;
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        setSubjects(data);
+        if (isPracticeMode) setPracticeSubjects(data);
+        else setSubjects(data);
       }
     } catch (error) {
       console.error("Error fetching subjects:", error);
@@ -145,10 +150,12 @@ const AdminQuestions = () => {
 
   const fetchQuestions = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/questions`);
+      const url = isPracticeMode ? `${API_BASE_URL}/practice-questions` : `${API_BASE_URL}/questions`;
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        setQuestions(data);
+        if (isPracticeMode) setPracticeQuestions(data);
+        else setQuestions(data);
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -171,8 +178,8 @@ const AdminQuestions = () => {
         fd.append("max_marks", formData.max_marks);
 
         const url = editingId
-          ? `${API_BASE_URL}/questions/${editingId}`
-          : `${API_BASE_URL}/questions`;
+          ? `${API_BASE_URL}/${isPracticeMode ? 'practice-questions' : 'questions'}/${editingId}`
+          : `${API_BASE_URL}/${isPracticeMode ? 'practice-questions' : 'questions'}`;
 
         const method = editingId ? "PUT" : "POST";
 
@@ -190,8 +197,8 @@ const AdminQuestions = () => {
         };
 
         const url = editingId
-          ? `${API_BASE_URL}/questions/${editingId}`
-          : `${API_BASE_URL}/questions`;
+          ? `${API_BASE_URL}/${isPracticeMode ? 'practice-questions' : 'questions'}/${editingId}`
+          : `${API_BASE_URL}/${isPracticeMode ? 'practice-questions' : 'questions'}`;
 
         const method = editingId ? "PUT" : "POST";
 
@@ -244,7 +251,7 @@ const AdminQuestions = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
-        const response = await fetch(`${API_BASE_URL}/questions/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${isPracticeMode ? 'practice-questions' : 'questions'}/${id}`, {
           method: "DELETE",
         });
 
@@ -264,7 +271,7 @@ const AdminQuestions = () => {
   const handleDeleteSubject = async (id: number, subjectName: string) => {
     if (window.confirm(`Are you sure you want to delete the subject "${subjectName}"? This will also delete all questions associated with it.`)) {
       try {
-        const response = await fetch(`${API_BASE_URL}/subjects/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${isPracticeMode ? 'practice-subjects' : 'subjects'}/${id}`, {
           method: "DELETE",
         });
 
@@ -293,7 +300,7 @@ const AdminQuestions = () => {
 
     setIsCreatingSubject(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/subjects`, {
+      const response = await fetch(`${API_BASE_URL}/${isPracticeMode ? 'practice-subjects' : 'subjects'}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject_name: newSubjectName }),
@@ -337,7 +344,7 @@ const AdminQuestions = () => {
         display_order: 0,
       };
 
-      const response = await fetch(`${API_BASE_URL}/subjects`, {
+      const response = await fetch(`${API_BASE_URL}/${isPracticeMode ? 'practice-subjects' : 'subjects'}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -378,9 +385,12 @@ const AdminQuestions = () => {
   };
 
   const getSubjectName = (subjectId: number) => {
-    const subject = subjects.find((s) => s.id === subjectId);
+    const subject = (isPracticeMode ? practiceSubjects : subjects).find((s) => s.id === subjectId);
     return subject?.subject_name || "Unknown";
   };
+
+  const currentSubjects = isPracticeMode ? practiceSubjects : subjects;
+  const currentQuestions = isPracticeMode ? practiceQuestions : questions;
 
   const resolveImageUrl = (url: string) => {
     if (!url) return "";
@@ -504,7 +514,7 @@ const AdminQuestions = () => {
                                 <SelectValue placeholder="Choose a parent subject" />
                               </SelectTrigger>
                               <SelectContent>
-                                {subjects
+                                {currentSubjects
                                   .filter((s) => !s.parent_id)
                                   .map((subject) => (
                                     <SelectItem
@@ -558,20 +568,20 @@ const AdminQuestions = () => {
                     </div>
 
                     {/* Subjects List */}
-                    {subjects.length === 0 ? (
+                    {currentSubjects.length === 0 ? (
                       <p className="text-muted-foreground">No subjects available. Create your first subject above!</p>
                     ) : (
                       <>
                         {/* Parent Subjects Section */}
                         <div className="mb-8">
                           <h3 className="text-lg font-semibold text-foreground mb-4">
-                            Parent Subjects ({subjects.filter((s) => !s.parent_id).length})
+                            Parent Subjects ({currentSubjects.filter((s) => !s.parent_id).length})
                           </h3>
-                          {subjects.filter((s) => !s.parent_id).length === 0 ? (
+                          {currentSubjects.filter((s) => !s.parent_id).length === 0 ? (
                             <p className="text-muted-foreground">No parent subjects yet.</p>
                           ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                              {subjects
+                              {currentSubjects
                                 .filter((s) => !s.parent_id)
                                 .map((subject) => (
                                   <div
@@ -601,16 +611,16 @@ const AdminQuestions = () => {
                         {/* Child Subjects Section */}
                         <div>
                           <h3 className="text-lg font-semibold text-foreground mb-4">
-                            Sub-Subjects ({subjects.filter((s) => s.parent_id).length})
+                            Sub-Subjects ({currentSubjects.filter((s) => s.parent_id).length})
                           </h3>
-                          {subjects.filter((s) => s.parent_id).length === 0 ? (
+                          {currentSubjects.filter((s) => s.parent_id).length === 0 ? (
                             <p className="text-muted-foreground">No sub-subjects yet. Create one using the form above.</p>
                           ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                              {subjects
+                              {currentSubjects
                                 .filter((s) => s.parent_id)
                                 .map((subject) => {
-                                  const parentName = subjects.find((p) => p.id === subject.parent_id)?.subject_name;
+                                  const parentName = currentSubjects.find((p) => p.id === subject.parent_id)?.subject_name;
                                   return (
                                     <div
                                       key={subject.id}
@@ -673,7 +683,7 @@ const AdminQuestions = () => {
                             <SelectValue placeholder="Select subject" />
                           </SelectTrigger>
                           <SelectContent>
-                            {subjects.map((subject) => (
+                            {currentSubjects.map((subject) => (
                               <SelectItem key={subject.id} value={subject.id.toString()}>
                                 {subject.subject_name}
                               </SelectItem>
@@ -846,10 +856,10 @@ const AdminQuestions = () => {
                 >
                   <div className="mb-6">
                     <h2 className="text-2xl font-bold text-foreground mb-4">
-                      All Questions ({questions.length})
+                      All Questions ({currentQuestions.length})
                     </h2>
 
-                    {questions.length === 0 ? (
+                    {currentQuestions.length === 0 ? (
                       <Card className="p-8 text-center">
                         <p className="text-muted-foreground">
                           No questions added yet. Start by adding your first question!
@@ -857,7 +867,7 @@ const AdminQuestions = () => {
                       </Card>
                     ) : (
                       <div className="space-y-4">
-                        {questions.map((question, index) => (
+                        {currentQuestions.map((question, index) => (
                           <motion.div
                             key={question.id}
                             initial={{ opacity: 0, y: 10 }}
